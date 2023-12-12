@@ -90,7 +90,6 @@ namespace Assets.Scripts
 
 		private bool CheckLine(int startRow, int startCol, int rowIncrement, int colIncrement, int player)
 		{
-
 			int count = 0;
 
 			for (int i = -3; i <= 3; i++)
