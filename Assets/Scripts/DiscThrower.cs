@@ -144,7 +144,7 @@ namespace Assets.Scripts
 		{
 
 			powerCurveValue = throwPowerCurve.Evaluate(poweringUpTime);
-			Debug.Log($"Released power at: {powerCurveValue}");
+			//Debug.Log($"Released power at: {powerCurveValue}");
 
 			GameObject discToThrow = currentPlayer == 1 ? playerOneDiscs[playerOneIndex] : playerTwoDiscs[playerTwoIndex];
 			discToThrow.SetActive(true);

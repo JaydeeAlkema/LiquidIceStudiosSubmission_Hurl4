@@ -50,7 +50,7 @@ namespace Assets.Scripts
 
 			string[] discNameSplit = discInSlot.transform.parent.name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 			player = discNameSplit[1] == "P1" ? 1 : 2;
-			Debug.Log($"<color=green>{discInSlot.name} now belongs to {name}</color>", this);
+			//Debug.Log($"<color=green>{discInSlot.name} now belongs to {name}</color>", this);
 
 			playfield.Wincheck(player);
 		}
