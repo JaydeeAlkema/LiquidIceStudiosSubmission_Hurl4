@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48c450c61bc09684a9fcc425f7c4eb35, type: 3}
   m_Name: Player 1 Discs Left
   m_EditorClassIdentifier: 
-  value: 21
+  value: 0
   shouldReset: 1
+  startValue: 21
