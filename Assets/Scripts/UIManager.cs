@@ -19,6 +19,7 @@ namespace Assets.Scripts
 		public void ToggleGameOverPanel(int player)
 		{
 			gameOverPanel.SetActive(!gameOverPanel.activeInHierarchy);
+			winningPlayerText.text = $"Player {player} won!";
 		}
 		public void RetryGame()
 		{
