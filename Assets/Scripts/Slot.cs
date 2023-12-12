@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,16 +13,21 @@ namespace Assets.Scripts
 		private GameObject discInSlot = null;
 		private Coroutine coroutine = null;
 
-		void SetPlayfield(Playfield playfield)
+		public void SetPlayfield(Playfield playfield)
 		{
 			this.playfield = playfield;
+		}
+
+		public int GetPlayer()
+		{
+			return player;
 		}
 
 		private void OnTriggerEnter2D(Collider2D collision)
 		{
 			if (collision.name.Contains("Disc"))
 			{
-				Debug.Log($"{collision.name} entered {name}", this);
+				//Debug.Log($"{collision.name} entered {name}", this);
 				discInSlot = collision.gameObject;
 				coroutine = StartCoroutine(CountdownTillDiscIsStableInSlot());
 			}
@@ -30,7 +36,7 @@ namespace Assets.Scripts
 		{
 			if (collision.name.Contains("Disc"))
 			{
-				Debug.Log($"{collision.name} exited {name}", this);
+				//Debug.Log($"{collision.name} exited {name}", this);
 				discInSlot = null;
 				StopCoroutine(coroutine);
 			}
@@ -42,8 +48,11 @@ namespace Assets.Scripts
 			if (discInSlot == null) yield return null;
 			if (discInSlot.GetComponentInParent<Rigidbody2D>().velocity != Vector2.zero) yield return null;
 
-			player = discInSlot.name.Contains("P1") ? 1 : 2;
+			string[] discNameSplit = discInSlot.transform.parent.name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+			player = discNameSplit[1] == "P1" ? 1 : 2;
 			Debug.Log($"<color=green>{discInSlot.name} now belongs to {name}</color>", this);
+
+			playfield.Wincheck(player);
 		}
 	}
 }
