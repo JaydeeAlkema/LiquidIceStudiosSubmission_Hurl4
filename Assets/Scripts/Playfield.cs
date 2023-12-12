@@ -11,6 +11,7 @@ namespace Assets.Scripts
 		[SerializeField, BoxGroup("Settings")] private int columns = 6;
 
 		[SerializeField, BoxGroup("References")] private GameObject slotPrefab = default;
+		[SerializeField, BoxGroup("References")] private UIManager uiManager = default; // Im choosing not to use a singleton pattern, since the ui manager lives in the scene permenantly.
 
 		private GameObject[,] grid;
 		private List<GameObject> slotsInScene = new();
@@ -63,8 +64,8 @@ namespace Assets.Scripts
 					if (gameOver) return;
 					if (CheckForWin(row, colum, player))
 					{
-						Debug.Log($"Player {player} won!");
 						gameOver = true;
+						uiManager.ToggleGameOverPanel(player);
 					}
 				}
 			}
