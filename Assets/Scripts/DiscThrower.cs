@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 namespace Assets.Scripts
 {
@@ -38,13 +39,18 @@ namespace Assets.Scripts
 
 		private void Awake()
 		{
+			Application.targetFrameRate = 60;
+
 			inputs = new PlayerInputs();
 
 			playerOneStartPosition.gameObject.SetActive(false);
 			playerTwoStartPosition.gameObject.SetActive(false);
 
+			inputs.UI.Reset.performed += ResetGame;
+
 			EnableInputs();
 		}
+
 
 		private void Start()
 		{
@@ -61,6 +67,12 @@ namespace Assets.Scripts
 		{
 			DisableInputs();
 		}
+
+		private void ResetGame(InputAction.CallbackContext context)
+		{
+			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+		}
+
 
 		/// <summary>
 		/// The main Game Loop. This handles setting the current player and indicators.
@@ -137,7 +149,7 @@ namespace Assets.Scripts
 
 			GameObject discToThrow = currentPlayer == 1 ? playerOneDiscs[playerOneIndex] : playerTwoDiscs[playerTwoIndex];
 			discToThrow.SetActive(true);
-			
+
 			float angle = currentSpawnPoint.transform.eulerAngles.z;
 			angle += 90;
 			float angleRad = angle * Mathf.Deg2Rad;
@@ -164,6 +176,7 @@ namespace Assets.Scripts
 			inputs.Player.PlayerOne_DirectionKeys.Enable();
 			inputs.Player.PlayerTwo_PowerInput.Enable();
 			inputs.Player.PlayerTwo_DirectionKeys.Enable();
+			inputs.UI.Reset.Enable();
 		}
 		private void DisableInputs()
 		{
@@ -171,6 +184,7 @@ namespace Assets.Scripts
 			inputs.Player.PlayerOne_DirectionKeys.Disable();
 			inputs.Player.PlayerTwo_PowerInput.Disable();
 			inputs.Player.PlayerTwo_DirectionKeys.Disable();
+			inputs.UI.Reset.Disable();
 		}
 	}
 }
