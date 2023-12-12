@@ -107,7 +107,7 @@ namespace Assets.Scripts
 			{
 				poweringUpTime += Time.deltaTime;
 				powerCurveValue = throwPowerCurve.Evaluate(poweringUpTime);
-				currentPowerIndicator.transform.localScale = new Vector3(1, 1 + (powerCurveValue * 3), 1);
+				currentPowerIndicator.transform.localScale = new Vector3(1, 1 + (powerCurveValue * 4), 1);
 				//Debug.Log(powerCurveValue);
 
 				hasReleasedDisc = false;
