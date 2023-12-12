@@ -45,12 +45,6 @@ namespace Assets.Scripts
 		{
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 		}
-
-		public void BackToMainMenu()
-		{
-			SceneManager.LoadScene("Main Menu");
-		}
-
 		public void QuitGame()
 		{
 			Application.Quit();
