@@ -1,5 +1,4 @@
 ﻿using NaughtyAttributes;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -14,15 +13,15 @@ namespace Assets.Scripts
 		[SerializeField, BoxGroup("Settings")] private float throwPowerMultiplier = 15;
 		[SerializeField, BoxGroup("Settings")] private float rotationSpeed = 90f;
 
-		[SerializeField, BoxGroup("References")] private List<GameObject> playerOneDiscs = new List<GameObject>();
-		[SerializeField, BoxGroup("References")] private List<GameObject> playerTwoDiscs = new List<GameObject>();
+		[SerializeField, BoxGroup("References")] private List<GameObject> playerOneDiscs = new();
+		[SerializeField, BoxGroup("References")] private List<GameObject> playerTwoDiscs = new();
 		[Space]
 		[SerializeField, BoxGroup("References")] private Transform playerOneStartPosition;
 		[SerializeField, BoxGroup("References")] private GameObject playerOneStartPositionPowerIndicator;
 		[SerializeField, BoxGroup("References")] private Transform playerTwoStartPosition;
 		[SerializeField, BoxGroup("References")] private GameObject playerTwoStartPositionPowerIndicator;
 
-		[SerializeField, ReadOnly, BoxGroup("Privates")] private int currentPlayer = 0; // 0 means nobody is playing. Basically a fail-safe
+		[SerializeField, ReadOnly, BoxGroup("Privates")] private int currentPlayer = 0;
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private int playerOneIndex = 0;
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private int playerTwoIndex = 0;
 		[Space]
@@ -36,6 +35,7 @@ namespace Assets.Scripts
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private bool hasReleasedDisc = true;
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private float poweringUpTime = 0;
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private float powerCurveValue = 0;
+
 
 		private void Awake()
 		{
@@ -72,7 +72,6 @@ namespace Assets.Scripts
 		{
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 		}
-
 
 		/// <summary>
 		/// The main Game Loop. This handles setting the current player and indicators.
