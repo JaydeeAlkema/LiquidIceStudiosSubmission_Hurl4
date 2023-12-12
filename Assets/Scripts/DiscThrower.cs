@@ -1,4 +1,5 @@
-﻿using NaughtyAttributes;
+﻿using Assets.Scripts.Scriptables;
+using NaughtyAttributes;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -20,6 +21,8 @@ namespace Assets.Scripts
 		[SerializeField, BoxGroup("References")] private GameObject playerOneStartPositionPowerIndicator;
 		[SerializeField, BoxGroup("References")] private Transform playerTwoStartPosition;
 		[SerializeField, BoxGroup("References")] private GameObject playerTwoStartPositionPowerIndicator;
+		[SerializeField, BoxGroup("References")] private ScriptableInt playerOneDiscsCount;
+		[SerializeField, BoxGroup("References")] private ScriptableInt playerTwoDiscsCount;
 
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private int currentPlayer = 0;
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private int playerOneIndex = 0;
@@ -36,11 +39,8 @@ namespace Assets.Scripts
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private float poweringUpTime = 0;
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private float powerCurveValue = 0;
 
-
 		private void Awake()
 		{
-			Application.targetFrameRate = 60;
-
 			inputs = new PlayerInputs();
 
 			playerOneStartPosition.gameObject.SetActive(false);
@@ -161,6 +161,20 @@ namespace Assets.Scripts
 			powerCurveValue = 0;
 			poweringUpTime = 0f;
 			rot = 0;
+
+			switch (currentPlayer)
+			{
+				case 1:
+					playerOneDiscsCount.Value--;
+					break;
+
+				case 2:
+					playerTwoDiscsCount.Value--;
+					break;
+
+				default:
+					break;
+			}
 
 			if (currentPlayer == 1) playerOneIndex++;
 			else if (currentPlayer == 2) playerTwoIndex++;
