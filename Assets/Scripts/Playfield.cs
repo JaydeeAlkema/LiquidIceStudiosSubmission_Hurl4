@@ -1,3 +1,4 @@
+using Assets.Scripts.Scriptables;
 using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,11 +13,11 @@ namespace Assets.Scripts
 
 		[SerializeField, BoxGroup("References")] private GameObject slotPrefab = default;
 		[SerializeField, BoxGroup("References")] private UIManager uiManager = default; // Im choosing not to use a singleton pattern, since the ui manager lives in the scene permenantly.
+		[SerializeField, BoxGroup("References")] private ScriptableBool isGameOver = default;
 
 		private GameObject[,] grid;
 		private List<GameObject> slotsInScene = new();
 
-		private bool gameOver = false;
 
 		private void Start()
 		{
@@ -61,10 +62,10 @@ namespace Assets.Scripts
 			{
 				for (int colum = columns - 1; colum >= 0; colum--)
 				{
-					if (gameOver) return;
+					if (isGameOver.value == true) return;
 					if (CheckForWin(row, colum, player))
 					{
-						gameOver = true;
+						isGameOver.value = true;
 						uiManager.ToggleGameOverPanel(player);
 					}
 				}

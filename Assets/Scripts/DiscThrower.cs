@@ -23,12 +23,13 @@ namespace Assets.Scripts
 		[SerializeField, BoxGroup("References")] private GameObject playerTwoStartPositionPowerIndicator;
 		[SerializeField, BoxGroup("References")] private ScriptableInt playerOneDiscsCount;
 		[SerializeField, BoxGroup("References")] private ScriptableInt playerTwoDiscsCount;
+		[Space]
+		[SerializeField, BoxGroup("References")] private ScriptableBool isGameOver = default;
 
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private int currentPlayer = 0;
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private int playerOneIndex = 0;
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private int playerTwoIndex = 0;
 		[Space]
-		[SerializeField, ReadOnly, BoxGroup("Privates")] private PlayerInputs inputs = default;
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private Transform currentSpawnPoint = null;
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private GameObject currentPowerIndicator = null;
 		[Space]
@@ -39,6 +40,8 @@ namespace Assets.Scripts
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private float poweringUpTime = 0;
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private float powerCurveValue = 0;
 
+		private PlayerInputs inputs = default;
+
 		private void Awake()
 		{
 			inputs = new PlayerInputs();
@@ -46,11 +49,8 @@ namespace Assets.Scripts
 			playerOneStartPosition.gameObject.SetActive(false);
 			playerTwoStartPosition.gameObject.SetActive(false);
 
-			inputs.UI.Reset.performed += ResetGame;
-
 			EnableInputs();
 		}
-
 
 		private void Start()
 		{
@@ -59,6 +59,8 @@ namespace Assets.Scripts
 
 		private void Update()
 		{
+			if (isGameOver.value == true) return;
+
 			ReadDirectionalInputs();
 			PowerUpDisc();
 		}
@@ -68,16 +70,12 @@ namespace Assets.Scripts
 			DisableInputs();
 		}
 
-		private void ResetGame(InputAction.CallbackContext context)
-		{
-			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-		}
-
 		/// <summary>
 		/// The main Game Loop. This handles setting the current player and indicators.
 		/// </summary>
 		private void GameLoop()
 		{
+			if (isGameOver.value == true) return;
 			if (currentPlayer == 0) currentPlayer = Random.Range(1, 3);
 			else currentPlayer = currentPlayer == 1 ? 2 : 1;
 
@@ -165,11 +163,11 @@ namespace Assets.Scripts
 			switch (currentPlayer)
 			{
 				case 1:
-					playerOneDiscsCount.Value--;
+					playerOneDiscsCount.value--;
 					break;
 
 				case 2:
-					playerTwoDiscsCount.Value--;
+					playerTwoDiscsCount.value--;
 					break;
 
 				default:
@@ -189,7 +187,6 @@ namespace Assets.Scripts
 			inputs.Player.PlayerOne_DirectionKeys.Enable();
 			inputs.Player.PlayerTwo_PowerInput.Enable();
 			inputs.Player.PlayerTwo_DirectionKeys.Enable();
-			inputs.UI.Reset.Enable();
 		}
 		private void DisableInputs()
 		{
@@ -197,7 +194,6 @@ namespace Assets.Scripts
 			inputs.Player.PlayerOne_DirectionKeys.Disable();
 			inputs.Player.PlayerTwo_PowerInput.Disable();
 			inputs.Player.PlayerTwo_DirectionKeys.Disable();
-			inputs.UI.Reset.Disable();
 		}
 	}
 }

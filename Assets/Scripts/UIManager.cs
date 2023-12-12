@@ -1,9 +1,12 @@
 ﻿using Assets.Scripts.Scriptables;
 using NaughtyAttributes;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 namespace Assets.Scripts
@@ -18,16 +21,49 @@ namespace Assets.Scripts
 		[SerializeField, BoxGroup("Game Over UI")] private GameObject gameOverPanel = default;
 		[SerializeField, BoxGroup("Game Over UI")] private TextMeshProUGUI winningPlayerText = default;
 
+		[SerializeField, BoxGroup("Pause UI")] private GameObject pauseMenu = default;
+
+		[SerializeField, BoxGroup("Scriptable Objects To Reset")] private List<ScriptableInt> scriptableInts = new List<ScriptableInt>();
+		[SerializeField, BoxGroup("Scriptable Objects To Reset")] private List<ScriptableBool> scriptableBools = new List<ScriptableBool>();
+
+		private PlayerInputs inputs = default;
+
+		private void Awake()
+		{
+			inputs = new PlayerInputs();
+
+			inputs.UI.Escape.performed += ToggleEscapeMenu;
+		}
+
+		private void OnEnable()
+		{
+			inputs.UI.Enable();
+			inputs.UI.Escape.performed += ToggleEscapeMenu;
+
+		}
+
+		private void OnDisable()
+		{
+			inputs.UI.Disable();
+			inputs.UI.Escape.performed -= ToggleEscapeMenu;
+
+		}
+
 		private void FixedUpdate()
 		{
 			UpdateDiscsCountText();
+		}
+		private void ToggleEscapeMenu(InputAction.CallbackContext context)
+		{
+			pauseMenu.SetActive(!pauseMenu.activeInHierarchy);
+			Time.timeScale = pauseMenu.activeInHierarchy ? 0 : 1;
 		}
 
 		#region Floating Dynamic Text
 		public void UpdateDiscsCountText()
 		{
-			playerOneDiscsCountText.text = playerOneDiscsCount.Value.ToString();
-			playerTwoDiscsCountText.text = playerTwoDiscsCount.Value.ToString();
+			playerOneDiscsCountText.text = playerOneDiscsCount.value.ToString();
+			playerTwoDiscsCountText.text = playerTwoDiscsCount.value.ToString();
 		}
 		#endregion
 
@@ -43,6 +79,15 @@ namespace Assets.Scripts
 		}
 		public void RetryGame()
 		{
+			foreach (ScriptableInt scriptableInt in scriptableInts)
+			{
+				scriptableInt.Reset();
+			}
+
+			foreach (ScriptableBool scriptableBool in scriptableBools)
+			{
+				scriptableBool.Reset();
+			}
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 		}
 		public void QuitGame()
