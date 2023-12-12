@@ -12,6 +12,7 @@ namespace Assets.Scripts
 
 		private GameObject discInSlot = null;
 		private Coroutine coroutine = null;
+		private bool checkingForCorrectvelocity = false;
 
 		public void SetPlayfield(Playfield playfield)
 		{
@@ -29,7 +30,9 @@ namespace Assets.Scripts
 			{
 				//Debug.Log($"{collision.name} entered {name}", this);
 				discInSlot = collision.gameObject;
+				checkingForCorrectvelocity = true;
 				coroutine = StartCoroutine(CountdownTillDiscIsStableInSlot());
+				Debug.Log(discInSlot.GetComponentInParent<Rigidbody2D>().velocity.magnitude);
 			}
 		}
 		private void OnTriggerExit2D(Collider2D collision)
@@ -38,21 +41,33 @@ namespace Assets.Scripts
 			{
 				//Debug.Log($"{collision.name} exited {name}", this);
 				discInSlot = null;
+				checkingForCorrectvelocity = false;
 				StopCoroutine(coroutine);
 			}
 		}
 
 		private IEnumerator CountdownTillDiscIsStableInSlot()
 		{
-			yield return new WaitForSeconds(1);
-			if (discInSlot == null) yield return null;
-			if (discInSlot.GetComponentInParent<Rigidbody2D>().velocity != Vector2.zero) yield return null;
+			Rigidbody2D rb2d = discInSlot.GetComponentInParent<Rigidbody2D>();
+			while (checkingForCorrectvelocity == true)
+			{
+				float velocityM = rb2d.velocity.magnitude;
+				if (discInSlot == null) yield return null;
+				if (Mathf.Approximately(velocityM, 0f)) checkingForCorrectvelocity = false;
 
-			string[] discNameSplit = discInSlot.transform.parent.name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-			player = discNameSplit[1] == "P1" ? 1 : 2;
-			//Debug.Log($"<color=green>{discInSlot.name} now belongs to {name}</color>", this);
+				//Debug.Log($"Velocity check: {velocityM}", this);
+				yield return new WaitForSeconds(0.1f);
+			}
+			if (discInSlot != null)
+			{
+				string discName = discInSlot.transform.parent.name;
+				string[] discNameSplit = discName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+				player = discNameSplit[1] == "P1" ? 1 : 2;
+				Debug.Log($"<color=green>{discName} now belongs to {name}</color>", this);
 
-			playfield.Wincheck(player);
+				playfield.Wincheck(player);
+				yield return null;
+			}
 		}
 	}
 }
