@@ -6,9 +6,6 @@ using UnityEngine.InputSystem;
 
 namespace Assets.Scripts
 {
-	/// <summary>
-	/// The Disc Thrower class is responsible for keeping track which players turn it currently it is, and, ofcourse, handling the throwing part.
-	/// </summary>
 	public class DiscThrower : MonoBehaviour
 	{
 
@@ -65,6 +62,9 @@ namespace Assets.Scripts
 			DisableInputs();
 		}
 
+		/// <summary>
+		/// The main Game Loop. This handles setting the current player and indicators.
+		/// </summary>
 		private void GameLoop()
 		{
 			if (currentPlayer == 0) currentPlayer = Random.Range(1, 3);
@@ -86,6 +86,10 @@ namespace Assets.Scripts
 			}
 		}
 
+		/// <summary>
+		/// Reads the directional inputs of both player 1 and player 2.
+		/// This rotates the spawn point indicators.
+		/// </summary>
 		private void ReadDirectionalInputs()
 		{
 			float directionInput = currentPlayer == 1 ? inputs.Player.PlayerOne_DirectionKeys.ReadValue<float>() : inputs.Player.PlayerTwo_DirectionKeys.ReadValue<float>();
@@ -98,6 +102,9 @@ namespace Assets.Scripts
 			currentSpawnPoint.rotation = Quaternion.Euler(0, 0, rot);
 		}
 
+		/// <summary>
+		/// Reads the power up inputs of both player 1 and player 2.
+		/// </summary>
 		private void PowerUpDisc()
 		{
 			float powerInput = currentPlayer == 1 ? inputs.Player.PlayerOne_PowerInput.ReadValue<float>() : inputs.Player.PlayerTwo_PowerInput.ReadValue<float>();
@@ -118,6 +125,10 @@ namespace Assets.Scripts
 			}
 		}
 
+		/// <summary>
+		/// Releases a disc with the power value that get set in the "PowerUpDisc" method.
+		/// After releasing the disc, this method also resets a lot of values so the next player can have their turn.
+		/// </summary>
 		private void ReleaseDiscWithPower()
 		{
 
@@ -125,12 +136,13 @@ namespace Assets.Scripts
 			Debug.Log($"Released power at: {powerCurveValue}");
 
 			GameObject discToThrow = currentPlayer == 1 ? playerOneDiscs[playerOneIndex] : playerTwoDiscs[playerTwoIndex];
-			discToThrow.gameObject.SetActive(true);
+			discToThrow.SetActive(true);
+			
 			float angle = currentSpawnPoint.transform.eulerAngles.z;
 			angle += 90;
 			float angleRad = angle * Mathf.Deg2Rad;
 			Vector2 throwDirection = new(Mathf.Cos(angleRad), Mathf.Sin(angleRad));
-			discToThrow.GetComponent<Rigidbody2D>().velocity = throwDirection * powerCurveValue * throwPowerMultiplier;
+			discToThrow.GetComponent<Rigidbody2D>().velocity = powerCurveValue * throwPowerMultiplier * throwDirection;
 
 			currentPowerIndicator.transform.localScale = new Vector3(1, 1, 1);
 			currentSpawnPoint.transform.rotation = Quaternion.Euler(0, 0, 0);
