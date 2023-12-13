@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -32,7 +31,7 @@ namespace Assets.Scripts
 				discInSlot = collision.gameObject;
 				checkingForCorrectvelocity = true;
 				coroutine = StartCoroutine(CountdownTillDiscIsStableInSlot());
-				Debug.Log(discInSlot.GetComponentInParent<Rigidbody2D>().velocity.magnitude);
+				//Debug.Log(discInSlot.GetComponentInParent<Rigidbody2D>().velocity.magnitude);
 			}
 		}
 		private void OnTriggerExit2D(Collider2D collision)

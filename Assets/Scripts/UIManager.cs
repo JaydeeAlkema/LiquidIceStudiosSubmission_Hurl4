@@ -1,10 +1,7 @@
 ﻿using Assets.Scripts.Scriptables;
 using NaughtyAttributes;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -39,14 +36,12 @@ namespace Assets.Scripts
 		{
 			inputs.UI.Enable();
 			inputs.UI.Escape.performed += ToggleEscapeMenu;
-
 		}
 
 		private void OnDisable()
 		{
 			inputs.UI.Disable();
 			inputs.UI.Escape.performed -= ToggleEscapeMenu;
-
 		}
 
 		private void FixedUpdate()
@@ -75,7 +70,14 @@ namespace Assets.Scripts
 		public void ToggleGameOverPanel(int player)
 		{
 			gameOverPanel.SetActive(!gameOverPanel.activeInHierarchy);
-			winningPlayerText.text = $"Player {player} won!";
+			if (player == 0)
+			{
+				winningPlayerText.text = $"Draw!";
+			}
+			else
+			{
+				winningPlayerText.text = $"Player {player} won!";
+			}
 		}
 		public void RetryGame()
 		{
@@ -89,6 +91,10 @@ namespace Assets.Scripts
 				scriptableBool.Reset();
 			}
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+		}
+		public void BackToMainMenu()
+		{
+			SceneManager.LoadScene(0);
 		}
 		public void QuitGame()
 		{
