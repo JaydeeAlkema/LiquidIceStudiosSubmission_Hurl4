@@ -2,8 +2,6 @@
 using NaughtyAttributes;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 namespace Assets.Scripts
 {
@@ -13,6 +11,8 @@ namespace Assets.Scripts
 		[SerializeField, BoxGroup("Settings")] private AnimationCurve throwPowerCurve;
 		[SerializeField, BoxGroup("Settings")] private float throwPowerMultiplier = 15;
 		[SerializeField, BoxGroup("Settings")] private float rotationSpeed = 90f;
+		[SerializeField, BoxGroup("Settings")] private float startRotation = 0;
+		[SerializeField, BoxGroup("Settings")] private Vector2 rotationClamps = new(-90, 90);
 
 		[SerializeField, BoxGroup("References")] private List<GameObject> playerOneDiscs = new();
 		[SerializeField, BoxGroup("References")] private List<GameObject> playerTwoDiscs = new();
@@ -25,6 +25,7 @@ namespace Assets.Scripts
 		[SerializeField, BoxGroup("References")] private ScriptableInt playerTwoDiscsCount;
 		[Space]
 		[SerializeField, BoxGroup("References")] private ScriptableBool isGameOver = default;
+		[SerializeField, BoxGroup("References")] private UIManager uiManager = default; // Im choosing not to use a singleton pattern, since the ui manager lives in the scene permenantly.
 
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private int currentPlayer = 0;
 		[SerializeField, ReadOnly, BoxGroup("Privates")] private int playerOneIndex = 0;
@@ -48,6 +49,8 @@ namespace Assets.Scripts
 
 			playerOneStartPosition.gameObject.SetActive(false);
 			playerTwoStartPosition.gameObject.SetActive(false);
+
+			rot = startRotation;
 
 			EnableInputs();
 		}
@@ -86,7 +89,7 @@ namespace Assets.Scripts
 				currentSpawnPoint = playerOneStartPosition;
 				currentPowerIndicator = playerOneStartPositionPowerIndicator;
 			}
-			else
+			else if (currentPlayer == 2)
 			{
 				playerOneStartPosition.gameObject.SetActive(false);
 				playerTwoStartPosition.gameObject.SetActive(true);
@@ -104,10 +107,11 @@ namespace Assets.Scripts
 			float directionInput = currentPlayer == 1 ? inputs.Player.PlayerOne_DirectionKeys.ReadValue<float>() : inputs.Player.PlayerTwo_DirectionKeys.ReadValue<float>();
 			if (directionInput == 0) return;
 
-
 			float rotationChange = -directionInput * rotationSpeed * Time.deltaTime;
 			rot += rotationChange;
-			rot = Mathf.Clamp(rot, -90, 90);
+
+			rot = Mathf.Clamp(rot, rotationClamps.x, rotationClamps.y);
+
 			currentSpawnPoint.rotation = Quaternion.Euler(0, 0, rot);
 		}
 
@@ -140,7 +144,6 @@ namespace Assets.Scripts
 		/// </summary>
 		private void ReleaseDiscWithPower()
 		{
-
 			powerCurveValue = throwPowerCurve.Evaluate(poweringUpTime);
 			//Debug.Log($"Released power at: {powerCurveValue}");
 
@@ -154,11 +157,11 @@ namespace Assets.Scripts
 			discToThrow.GetComponent<Rigidbody2D>().velocity = powerCurveValue * throwPowerMultiplier * throwDirection;
 
 			currentPowerIndicator.transform.localScale = new Vector3(1, 1, 1);
-			currentSpawnPoint.transform.rotation = Quaternion.Euler(0, 0, 0);
+			currentSpawnPoint.transform.rotation = Quaternion.Euler(0, 0, startRotation);
 
 			powerCurveValue = 0;
 			poweringUpTime = 0f;
-			rot = 0;
+			rot = startRotation;
 
 			switch (currentPlayer)
 			{
@@ -173,7 +176,11 @@ namespace Assets.Scripts
 				default:
 					break;
 			}
-
+			if (playerOneDiscsCount.value == 0 && playerTwoDiscsCount.value == 0)
+			{
+				isGameOver.value = true;
+				uiManager.ToggleGameOverPanel(0);
+			}
 			if (currentPlayer == 1) playerOneIndex++;
 			else if (currentPlayer == 2) playerTwoIndex++;
 
