@@ -20,8 +20,9 @@ namespace Assets.Scripts
 
 		[SerializeField, BoxGroup("Pause UI")] private GameObject pauseMenu = default;
 
-		[SerializeField, BoxGroup("Scriptable Objects To Reset")] private List<ScriptableInt> scriptableInts = new List<ScriptableInt>();
-		[SerializeField, BoxGroup("Scriptable Objects To Reset")] private List<ScriptableBool> scriptableBools = new List<ScriptableBool>();
+		// Perhaps a bit of an odd place to have these references. But since the UI manager handles the Game Over screen, I thought it only fair to also reset the scriptable objects at the same spot.
+		[SerializeField, BoxGroup("Scriptable Objects To Reset")] private List<ScriptableInt> scriptableInts = new();
+		[SerializeField, BoxGroup("Scriptable Objects To Reset")] private List<ScriptableBool> scriptableBools = new();
 
 		private PlayerInputs inputs = default;
 
@@ -48,36 +49,23 @@ namespace Assets.Scripts
 		{
 			UpdateDiscsCountText();
 		}
+
 		private void ToggleEscapeMenu(InputAction.CallbackContext context)
 		{
 			pauseMenu.SetActive(!pauseMenu.activeInHierarchy);
 			Time.timeScale = pauseMenu.activeInHierarchy ? 0 : 1;
 		}
 
-		#region Floating Dynamic Text
 		public void UpdateDiscsCountText()
 		{
 			playerOneDiscsCountText.text = playerOneDiscsCount.value.ToString();
 			playerTwoDiscsCountText.text = playerTwoDiscsCount.value.ToString();
 		}
-		#endregion
 
-		#region Game Over
-		/// <summary>
-		/// Toggles the Game Over screen
-		/// </summary>
-		/// <param name="player"> Int of the winning player. </param>
 		public void ToggleGameOverPanel(int player)
 		{
 			gameOverPanel.SetActive(!gameOverPanel.activeInHierarchy);
-			if (player == 0)
-			{
-				winningPlayerText.text = $"Draw!";
-			}
-			else
-			{
-				winningPlayerText.text = $"Player {player} won!";
-			}
+			winningPlayerText.text = player == 0 ? $"Draw!" : $"Player {player} won!";
 		}
 		public void RetryGame()
 		{
@@ -85,11 +73,11 @@ namespace Assets.Scripts
 			{
 				scriptableInt.Reset();
 			}
-
 			foreach (ScriptableBool scriptableBool in scriptableBools)
 			{
 				scriptableBool.Reset();
 			}
+
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 		}
 		public void BackToMainMenu()
@@ -100,6 +88,5 @@ namespace Assets.Scripts
 		{
 			Application.Quit();
 		}
-		#endregion
 	}
 }

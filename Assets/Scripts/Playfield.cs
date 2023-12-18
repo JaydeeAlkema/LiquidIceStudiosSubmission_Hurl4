@@ -1,6 +1,5 @@
 using Assets.Scripts.Scriptables;
 using NaughtyAttributes;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,7 +16,6 @@ namespace Assets.Scripts
 
 		private GameObject[,] grid;
 		private List<GameObject> slotsInScene = new();
-
 
 		private void Start()
 		{
@@ -63,11 +61,10 @@ namespace Assets.Scripts
 				for (int colum = columns - 1; colum >= 0; colum--)
 				{
 					if (isGameOver.value == true) return;
-					if (CheckForWin(row, colum, player))
-					{
-						isGameOver.value = true;
-						uiManager.ToggleGameOverPanel(player);
-					}
+					if (!CheckForWin(row, colum, player)) continue;
+
+					isGameOver.value = true;
+					uiManager.ToggleGameOverPanel(player);
 				}
 			}
 		}
@@ -101,11 +98,9 @@ namespace Assets.Scripts
 				if (IsInGrid(row, col) && grid[row, col].GetComponent<Slot>().GetPlayer() == player)
 				{
 					count++;
+					if (count != 4) continue;
 
-					if (count == 4)
-					{
-						return true;
-					}
+					return true;
 				}
 				else
 				{
@@ -116,9 +111,6 @@ namespace Assets.Scripts
 			return false;
 		}
 
-		private bool IsInGrid(int row, int col)
-		{
-			return row >= 0 && row < rows && col >= 0 && col < columns;
-		}
+		private bool IsInGrid(int row, int col) => row >= 0 && row < rows && col >= 0 && col < columns;
 	}
 }

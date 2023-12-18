@@ -1,5 +1,4 @@
 ﻿using NaughtyAttributes;
-using System.Collections;
 using UnityEngine;
 
 namespace Assets.Scripts.Scriptables

@@ -27,34 +27,32 @@ namespace Assets.Scripts
 		{
 			if (collision.name.Contains("Disc"))
 			{
-				//Debug.Log($"{collision.name} entered {name}", this);
 				discInSlot = collision.gameObject;
 				checkingForCorrectvelocity = true;
 				coroutine = StartCoroutine(CountdownTillDiscIsStableInSlot());
-				//Debug.Log(discInSlot.GetComponentInParent<Rigidbody2D>().velocity.magnitude);
 			}
 		}
 		private void OnTriggerExit2D(Collider2D collision)
 		{
 			if (collision.name.Contains("Disc"))
 			{
-				//Debug.Log($"{collision.name} exited {name}", this);
 				discInSlot = null;
 				checkingForCorrectvelocity = false;
 				StopCoroutine(coroutine);
 			}
 		}
 
+		// Could have probably done this with a timer in the Update method. But using a coroutine felt better in this case.
 		private IEnumerator CountdownTillDiscIsStableInSlot()
 		{
 			Rigidbody2D rb2d = discInSlot.GetComponentInParent<Rigidbody2D>();
 			while (checkingForCorrectvelocity == true)
 			{
-				float velocityM = rb2d.velocity.magnitude;
 				if (discInSlot == null) yield return null;
+
+				float velocityM = rb2d.velocity.magnitude;
 				if (Mathf.Approximately(velocityM, 0f)) checkingForCorrectvelocity = false;
 
-				//Debug.Log($"Velocity check: {velocityM}", this);
 				yield return new WaitForSeconds(0.1f);
 			}
 			if (discInSlot != null)
@@ -62,7 +60,6 @@ namespace Assets.Scripts
 				string discName = discInSlot.transform.parent.name;
 				string[] discNameSplit = discName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 				player = discNameSplit[1] == "P1" ? 1 : 2;
-				Debug.Log($"<color=green>{discName} now belongs to {name}</color>", this);
 
 				playfield.Wincheck(player);
 				yield return null;
